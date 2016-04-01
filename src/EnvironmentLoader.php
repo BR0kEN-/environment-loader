@@ -14,7 +14,7 @@ use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Behat\Context\Initializer\ContextInitializer;
 // Behat environment extension and tools.
 use Behat\Testwork\Environment\ServiceContainer\EnvironmentExtension;
-use Behat\Testwork\Environment\Reader\EnvironmentReader;
+use Behat\Testwork\Environment\Reader\EnvironmentReader as EnvironmentExtensionReader;
 
 /**
  * Class EnvironmentLoader.
@@ -115,7 +115,7 @@ final class EnvironmentLoader
         $this->addDefinition(
             'Environment',
             'Reader',
-            EnvironmentReader::class,
+            EnvironmentExtensionReader::class,
             EnvironmentExtension::READER_TAG,
             array_merge($arguments, [$this->namespace, $this->path])
         );
