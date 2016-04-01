@@ -2,6 +2,13 @@
 
 This tool - is a Behat library for auto loading context classes of extension to context environment.
 
+[![Latest Stable Version](https://poser.pugx.org/behat/environment-loader/v/stable)](https://packagist.org/packages/behat/environment-loader)
+[![License](https://poser.pugx.org/behat/environment-loader/license)](https://packagist.org/packages/behat/environment-loader)
+[![Build Status](https://img.shields.io/travis/BR0kEN-/environment-loader/master.svg?style=flat)](https://travis-ci.org/BR0kEN-/environment-loader)
+[![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/BR0kEN-/environment-loader.svg?style=flat)](https://scrutinizer-ci.com/g/BR0kEN-/environment-loader/code-structure)
+[![Quality Score](https://img.shields.io/scrutinizer/g/BR0kEN-/environment-loader.svg?style=flat)](https://scrutinizer-ci.com/g/BR0kEN-/environment-loader)
+[![Total Downloads](https://poser.pugx.org/behat/environment-loader/downloads)](https://packagist.org/packages/behat/environment-loader)
+
 ## Usage
 
 See examples here:
