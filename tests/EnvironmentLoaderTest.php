@@ -11,5 +11,4 @@ namespace Behat\Tests;
  */
 class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
 {
-
 }

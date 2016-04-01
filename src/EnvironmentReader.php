@@ -4,9 +4,6 @@
  */
 namespace Behat;
 
-use Behat\Testwork\Call\Callee;
-use Behat\Behat\Context\Reader\ContextReader;
-
 // Interface for environments.
 use Behat\Testwork\Environment\Environment;
 // Interface for environments with contexts.
