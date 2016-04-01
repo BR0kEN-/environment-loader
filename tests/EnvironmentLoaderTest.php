@@ -4,8 +4,13 @@
  */
 namespace Behat\Tests;
 
+// Environment loader tools.
 use Behat\EnvironmentLoader;
+use Behat\EnvironmentReader;
+// Example Behat extension for testing.
 use Behat\Tests\ExampleExtension\ServiceContainer\ExampleExtension;
+// Behat configuration for testing.
+use Behat\Testwork\Suite\GenericSuite;
 // Behat extension interface.
 use Behat\Testwork\ServiceContainer\Extension;
 // Tools for dependency injection.
@@ -17,6 +22,8 @@ use Behat\Behat\Context\Initializer\ContextInitializer;
 // Behat environment extension and tools.
 use Behat\Testwork\Environment\ServiceContainer\EnvironmentExtension;
 use Behat\Testwork\Environment\Reader\EnvironmentReader as EnvironmentExtensionReader;
+// Interface for uninitialized environments with contexts.
+use Behat\Behat\Context\Environment\UninitializedContextEnvironment;
 
 /**
  * Class EnvironmentLoaderTest.
@@ -30,6 +37,14 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
      */
     private $loader;
     /**
+     * @var EnvironmentReader
+     */
+    private $reader;
+    /**
+     * @var UninitializedContextEnvironment
+     */
+    private $environment;
+    /**
      * @var ExampleExtension
      */
     private $extension;
@@ -37,6 +52,12 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
      * @var ContainerBuilder
      */
     private $container;
+    /**
+     * Properties and their values of the "EnvironmentLoader" instance.
+     *
+     * @var array
+     */
+    private $properties = [];
 
     /**
      * {@inheritdoc}
@@ -46,35 +67,115 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         $this->extension = new ExampleExtension();
         $this->container = new ContainerBuilder();
         $this->loader = new EnvironmentLoader($this->extension, $this->container);
+
+        foreach ((new \ReflectionClass($this->loader))->getProperties(\ReflectionProperty::IS_PRIVATE) as $property) {
+            $this->properties[$property->name] = static::getObjectAttribute($this->loader, $property->name);
+        }
     }
 
     /**
      * @test
      */
-    public function testEnvironmentLoaderConstructor()
+    public function loaderConstructor()
     {
-        $namespace = sprintf('%s\ExampleExtension', __NAMESPACE__);
-        $configKey = $this->extension->getConfigKey();
-
         foreach ([
             'path' => sprintf('%s/example-extension', __DIR__),
-            'namespace' => $namespace,
+            'namespace' => sprintf('%s\ExampleExtension', __NAMESPACE__),
             'container' => $this->container,
-            'configKey' => $configKey,
-            'classPath' => sprintf('%s\%s\Example', $namespace, '%s'),
+            'configKey' => $this->extension->getConfigKey(),
+            'classPath' => sprintf('%s\%s\Example', $this->properties['namespace'], '%s'),
         ] as $property => $value) {
-            static::assertAttributeEquals($value, $property, $this->loader);
+            if ($this->properties[$property] !== $value) {
+                static::fail(sprintf(
+                    'The "%s::%s" does not contain necessary value.',
+                    get_class($this->loader),
+                    $property
+                ));
+            }
+
+            $this->properties[$property] = $value;
         }
 
-        static::assertTrue($this->container->has(sprintf('%s.%s', $configKey, EnvironmentExtension::READER_TAG)));
-        static::assertArrayHasKey(ContextExtension::INITIALIZER_TAG, $this->getEnvironmentLoaderDefinitions());
+        // Reader was set in constructor.
+        static::assertTrue($this->isContainerHasDefinition(EnvironmentExtension::READER_TAG));
+        // Initializer must be defined.
+        static::assertTrue($this->isEnvironmentHasDefinition(ContextExtension::INITIALIZER_TAG));
+        // And must not be added to DI container.
+        static::assertFalse($this->isContainerHasDefinition(ContextExtension::INITIALIZER_TAG));
     }
 
     /**
-     * @return array
+     * @test
+     *
+     * @depends loaderConstructor
      */
-    private function getEnvironmentLoaderDefinitions()
+    public function addEnvironmentReader()
     {
-        return static::getObjectAttribute($this->loader, 'definitions');
+        $assert = true;
+
+        try {
+            // If we add custom environment reader to extension then exception won't thrown.
+            $this->loader->addEnvironmentReader();
+        } catch (\RuntimeException $e) {
+            $assert = false;
+        }
+
+        static::assertTrue($this->isEnvironmentHasDefinition(EnvironmentExtension::READER_TAG) === $assert);
+    }
+
+    /**
+     * @test
+     *
+     * @depends loaderConstructor
+     */
+    public function load()
+    {
+        $this->loader->load();
+
+        // Ensure that all definitions added to DI container.
+        foreach (array_keys($this->properties['definitions']) as $definition) {
+            static::assertTrue($this->isContainerHasDefinition($definition));
+        }
+    }
+
+    /**
+     * @test
+     *
+     * @depends load
+     */
+    public function readContexts()
+    {
+        // Read all contexts of our ExampleExtension.
+        $reader = new EnvironmentReader($this->properties['path'], $this->properties['namespace']);
+        // Imagine that we have uninitialized environment with a suite for testing (without configuration).
+        $environment = new UninitializedContextEnvironment(new GenericSuite('phpunit', []));
+
+        static::assertTrue($reader->supportsEnvironment($environment));
+        // Callees mustn't be returned because they are will be read from environment classes.
+        static::assertTrue($reader->readEnvironmentCallees($environment) === []);
+        // ExampleExtension has only one context.
+        static::assertCount(1, $environment->getContextClasses());
+    }
+
+    /**
+     * @param string $definition
+     *
+     * @return bool
+     */
+    private function isContainerHasDefinition($definition)
+    {
+        return $this->container->has(sprintf('%s.%s', $this->properties['configKey'], $definition));
+    }
+
+    /**
+     * @param string $definition
+     *
+     * @return bool
+     */
+    private function isEnvironmentHasDefinition($definition)
+    {
+        $definitions = static::getObjectAttribute($this->loader, 'definitions');
+
+        return isset($definitions[$definition]);
     }
 }
