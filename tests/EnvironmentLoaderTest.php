@@ -142,6 +142,18 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function runBehatTests()
+    {
+        $code = 0;
+
+        static::assertTrue(chdir('tests/behat'));
+        system('../../vendor/bin/behat > /dev/null', $code);
+        static::assertTrue(0 === $code);
+    }
+
+    /**
      * Get actual values for properties of the loader.
      */
     private function readLoaderProperties()

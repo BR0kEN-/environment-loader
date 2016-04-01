@@ -16,7 +16,9 @@
     "behat/behat": "3.*"
   },
   "require-dev": {
-    "phpunit/phpunit": "4 - 5"
+    "phpunit/phpunit": "4 - 5",
+    "drupal/tqextension": "dev-master",
+    "behat/soap-extension": "dev-master"
   },
   "autoload": {
     "psr-4": {

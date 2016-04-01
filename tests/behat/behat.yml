@@ -1,0 +1,11 @@
+default:
+  suites:
+    default:
+      contexts: {}
+  extensions:
+    Behat\MinkExtension:
+      goutte: ~
+      selenium2: ~
+      base_url: http://localhost
+    Drupal\TqExtension: ~
+    Behat\SoapExtension: ~
