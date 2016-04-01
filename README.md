@@ -40,3 +40,5 @@ class ExampleExtension implements Extension
     // ...
 }
 ```
+
+Here is a good "[how to](tests/example-extension)" about extension creation and usage of this library.
