@@ -14,7 +14,7 @@ This tool - is a Behat library for auto loading context classes of extension to 
 See examples here:
 
 - [TqExtension](https://github.com/BR0kEN-/TqExtension/blob/master/src/ServiceContainer/TqExtension.php#L40-L41)
-- [SoapExtension](https://github.com/asgorobets/SoapExtension)
+- [SoapExtension](https://github.com/asgorobets/SoapExtension/blob/master/src/ServiceContainer/SoapExtension.php#L40-L41)
 
 ```php
 namespace Behat\ExampleExtension\ServiceContainer;
