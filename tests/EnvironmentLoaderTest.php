@@ -37,14 +37,6 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
      */
     private $loader;
     /**
-     * @var EnvironmentReader
-     */
-    private $reader;
-    /**
-     * @var UninitializedContextEnvironment
-     */
-    private $environment;
-    /**
      * @var ExampleExtension
      */
     private $extension;
@@ -67,10 +59,6 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         $this->extension = new ExampleExtension();
         $this->container = new ContainerBuilder();
         $this->loader = new EnvironmentLoader($this->extension, $this->container);
-
-        foreach ((new \ReflectionClass($this->loader))->getProperties(\ReflectionProperty::IS_PRIVATE) as $property) {
-            $this->properties[$property->name] = static::getObjectAttribute($this->loader, $property->name);
-        }
     }
 
     /**
@@ -78,22 +66,16 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
      */
     public function loaderConstructor()
     {
-        foreach ([
-            'path' => sprintf('%s/example-extension', __DIR__),
-            'namespace' => sprintf('%s\ExampleExtension', __NAMESPACE__),
-            'container' => $this->container,
-            'configKey' => $this->extension->getConfigKey(),
-            'classPath' => sprintf('%s\%s\Example', $this->properties['namespace'], '%s'),
-        ] as $property => $value) {
-            if ($this->properties[$property] !== $value) {
-                static::fail(sprintf(
-                    'The "%s::%s" does not contain necessary value.',
-                    get_class($this->loader),
-                    $property
-                ));
-            }
+        $this->readLoaderProperties();
 
-            $this->properties[$property] = $value;
+        foreach ([
+          'path' => sprintf('%s/example-extension', __DIR__),
+          'namespace' => sprintf('%s\ExampleExtension', __NAMESPACE__),
+          'container' => $this->container,
+          'configKey' => $this->extension->getConfigKey(),
+          'classPath' => sprintf('%s\%s\Example', $this->properties['namespace'], '%s'),
+        ] as $property => $value) {
+            static::assertEquals($value, $this->properties[$property]);
         }
 
         // Reader was set in constructor.
@@ -131,6 +113,7 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
     public function load()
     {
         $this->loader->load();
+        $this->readLoaderProperties();
 
         // Ensure that all definitions added to DI container.
         foreach (array_keys($this->properties['definitions']) as $definition) {
@@ -143,8 +126,9 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
      *
      * @depends load
      */
-    public function readContexts()
+    public function readerConstructor()
     {
+        $this->readLoaderProperties();
         // Read all contexts of our ExampleExtension.
         $reader = new EnvironmentReader($this->properties['path'], $this->properties['namespace']);
         // Imagine that we have uninitialized environment with a suite for testing (without configuration).
@@ -155,6 +139,17 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         static::assertTrue($reader->readEnvironmentCallees($environment) === []);
         // ExampleExtension has only one context.
         static::assertCount(1, $environment->getContextClasses());
+    }
+
+    /**
+     * Get actual values for properties of the loader.
+     */
+    private function readLoaderProperties()
+    {
+        // Read all properties of the loader.
+        foreach ((new \ReflectionClass($this->loader))->getProperties(\ReflectionProperty::IS_PRIVATE) as $property) {
+            $this->properties[$property->name] = static::getObjectAttribute($this->loader, $property->name);
+        }
     }
 
     /**
