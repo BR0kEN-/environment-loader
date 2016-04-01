@@ -11,5 +11,4 @@ namespace Behat\Tests\ExampleExtension\Context;
  */
 class ExampleContext extends RawExampleContext
 {
-
 }

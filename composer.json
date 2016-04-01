@@ -26,7 +26,7 @@
   "autoload-dev": {
     "psr-4": {
       "Behat\\Tests\\": "tests/",
-      "Behat\\Tests\\ExampleExtension": "tests/example-extension"
+      "Behat\\Tests\\ExampleExtension\\": "tests/example-extension/"
     }
   }
 }
