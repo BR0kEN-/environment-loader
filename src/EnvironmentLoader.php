@@ -11,8 +11,10 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 // Behat context extension and tools.
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
+use Behat\Behat\Context\Initializer\ContextInitializer;
 // Behat environment extension and tools.
 use Behat\Testwork\Environment\ServiceContainer\EnvironmentExtension;
+use Behat\Testwork\Environment\Reader\EnvironmentReader as EnvironmentExtensionReader;
 
 /**
  * Class EnvironmentLoader.
@@ -96,7 +98,7 @@ final class EnvironmentLoader
         $this->addDefinition(
             'Context',
             'Initializer',
-            'Behat\Behat\Context\Initializer\ContextInitializer',
+            ContextInitializer::class,
             ContextExtension::INITIALIZER_TAG,
             [$config, $this->namespace, $this->path]
         );
@@ -113,7 +115,7 @@ final class EnvironmentLoader
         $this->addDefinition(
             'Environment',
             'Reader',
-            'Behat\Testwork\Environment\Reader\EnvironmentReader',
+            EnvironmentExtensionReader::class,
             EnvironmentExtension::READER_TAG,
             array_merge($arguments, [$this->namespace, $this->path])
         );

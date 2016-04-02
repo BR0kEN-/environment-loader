@@ -13,23 +13,21 @@
   ],
   "require": {
     "php": ">=5.5",
-    "behat/behat": "3.*"
+    "behat/behat": ">=3.0.6"
   },
-  "minimum-stability": "dev",
   "require-dev": {
     "phpunit/phpunit": "4 - 5",
-    "drupal/tqextension": "dev-master",
+    "behat/mink-goutte-driver": "dev-master",
     "behat/soap-extension": "dev-master"
   },
   "autoload": {
     "psr-4": {
-      "Behat\\": "src/"
+      "Behat\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Behat\\Tests\\": "tests/",
-      "Behat\\Tests\\ExampleExtension\\": "tests/example-extension/"
+      "Behat\\Tests\\ExampleExtension\\": "tests/example-extension"
     }
   }
 }

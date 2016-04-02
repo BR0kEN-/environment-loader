@@ -11,4 +11,10 @@ namespace Behat\Tests\ExampleExtension\Context;
  */
 class ExampleContext extends RawExampleContext
 {
+    /**
+     * @Then /^(?:|I )do nothing$/
+     */
+    public function exampleStep()
+    {
+    }
 }
