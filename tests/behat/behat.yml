@@ -3,5 +3,5 @@ default:
     default:
       contexts: {}
   extensions:
-    Behat\SoapExtension: ~
+    Behat\Tests\DummyExtension: ~
     Behat\Tests\ExampleExtension: ~
