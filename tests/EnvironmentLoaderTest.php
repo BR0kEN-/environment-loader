@@ -79,7 +79,7 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         }
 
         // Reader was set in constructor.
-        static::assertTrue($this->isContainerHasDefinition(EnvironmentExtension::READER_TAG));
+        static::assertTrue($this->isContainerHasDefinition('behat.' . EnvironmentExtension::READER_TAG));
         // Initializer must be defined.
         static::assertTrue($this->isEnvironmentHasDefinition(ContextExtension::INITIALIZER_TAG));
         // And must not be added to DI container.
