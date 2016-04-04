@@ -112,6 +112,11 @@ final class EnvironmentLoader
     public function addEnvironmentReader(array $arguments = [])
     {
         // Full namespace: <EXTENSION_NAMESPACE>\Environment\<EXTENSION_CONFIG_KEY>EnvironmentReader.
+        // For example we have registered extension at namespace: "Behat\TqExtension". Class, which
+        // implements extension interface, located at "Behat\TqExtension\ServiceContainer\TqExtension"
+        // and its method, "getConfigKey()", returns the "tq" string. In this case the full namespace
+        // of the reader object will be: "Behat\TqExtension\Environment\TqEnvironmentReader" and its
+        // constructor will have a set of arguments that were passed to this method.
         $this->addDefinition(
             'Environment',
             'Reader',
@@ -137,16 +142,11 @@ final class EnvironmentLoader
      * @param string $subNamespace
      * @param string $objectType
      * @param string $interface
-     * @param string$tag
+     * @param string $tag
      * @param array $arguments
      */
     private function addDefinition($subNamespace, $objectType, $interface, $tag, array $arguments = [])
     {
-        // For example we have registered extension at namespace: "Behat\TqExtension". Class, which
-        // implements extension interface, located at "Behat\TqExtension\ServiceContainer\TqExtension"
-        // and its method, "getConfigKey()", returns the "tq" string. In this case the full namespace
-        // of the reader object will be: "Behat\TqExtension\Environment\TqEnvironmentReader" and its
-        // constructor will have a set of arguments that were passed to this method.
         $class = sprintf($this->classPath, $subNamespace) . $subNamespace . $objectType;
 
         if (!class_exists($class)) {
