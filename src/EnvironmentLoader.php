@@ -93,7 +93,7 @@ final class EnvironmentLoader
         $this->extendContainer(EnvironmentExtension::READER_TAG, new Definition(
             sprintf('%s\EnvironmentReader', __NAMESPACE__),
             [$this->path, $this->namespace]
-        ));
+        ), 'behat');
 
         $this->addDefinition(
             'Context',
@@ -122,7 +122,7 @@ final class EnvironmentLoader
             'Reader',
             EnvironmentExtensionReader::class,
             EnvironmentExtension::READER_TAG,
-            array_merge($arguments, [$this->namespace, $this->path])
+            array_merge([$this->namespace, $this->path], $arguments)
         );
     }
 
@@ -165,11 +165,16 @@ final class EnvironmentLoader
      *
      * @param string $tag
      * @param Definition $definition
+     * @param string $identifier
      */
-    private function extendContainer($tag, Definition $definition)
+    private function extendContainer($tag, Definition $definition, $identifier = '')
     {
+        if ('' !== $identifier) {
+            $identifier .= '.';
+        }
+
         $this->container
-          ->setDefinition("$this->configKey.$tag", $definition)
+          ->setDefinition("$this->configKey.$identifier$tag", $definition)
           ->addTag($tag);
     }
 }
