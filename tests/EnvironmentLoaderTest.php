@@ -193,6 +193,7 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
      */
     private static function resolvePath($path)
     {
+        return $path;
         return '/' === DIRECTORY_SEPARATOR ? $path : str_replace('/', '\\', $path);
     }
 }
