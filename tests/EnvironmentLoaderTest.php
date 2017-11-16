@@ -67,10 +67,9 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
     public function loaderConstructor()
     {
         $this->readLoaderProperties();
-        $path = str_replace('/', DIRECTORY_SEPARATOR, '%s/behat/extensions/ExampleExtension');
 
         foreach ([
-          'path' => sprintf($path, __DIR__),
+          'path' => self::resolvePath(sprintf('%s/behat/extensions/ExampleExtension', __DIR__)),
           'namespace' => sprintf('%s\ExampleExtension', __NAMESPACE__),
           'container' => $this->container,
           'configKey' => $this->extension->getConfigKey(),
@@ -150,8 +149,7 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         $code = 0;
 
         static::assertTrue(chdir('tests/behat'));
-        $path = str_replace('/', DIRECTORY_SEPARATOR, '../../vendor/bin/behat --no-colors');
-        system($path, $code);
+        system(self::resolvePath('../../vendor/bin/behat --no-colors'), $code);
         static::assertTrue(0 === $code);
     }
 
@@ -186,5 +184,15 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         $definitions = static::getObjectAttribute($this->loader, 'definitions');
 
         return isset($definitions[$definition]);
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    private static function resolvePath($path)
+    {
+        return '/' === DIRECTORY_SEPARATOR ? $path : str_replace('/', '\\', $path);
     }
 }
