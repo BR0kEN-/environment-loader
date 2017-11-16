@@ -67,9 +67,10 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
     public function loaderConstructor()
     {
         $this->readLoaderProperties();
+        $path = str_replace('/', DIRECTORY_SEPARATOR, '%s/behat/extensions/ExampleExtension');
 
         foreach ([
-          'path' => sprintf('%s/behat/extensions/ExampleExtension', __DIR__),
+          'path' => sprintf($path, __DIR__),
           'namespace' => sprintf('%s\ExampleExtension', __NAMESPACE__),
           'container' => $this->container,
           'configKey' => $this->extension->getConfigKey(),
