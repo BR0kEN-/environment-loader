@@ -44,4 +44,4 @@ install:
 
 test_script:
   - cd c:\projects\environment-loader
-  - php vendor\phpunit\phpunit\phpunit --testdox
+  - php vendor\phpunit\phpunit\phpunit
