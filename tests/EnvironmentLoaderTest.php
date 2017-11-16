@@ -150,7 +150,8 @@ class EnvironmentLoaderTest extends \PHPUnit_Framework_TestCase
         $code = 0;
 
         static::assertTrue(chdir('tests/behat'));
-        system('../../vendor/bin/behat --no-colors', $code);
+        $path = str_replace('/', DIRECTORY_SEPARATOR, '../../vendor/bin/behat --no-colors');
+        system($path, $code);
         static::assertTrue(0 === $code);
     }
 
