@@ -73,7 +73,7 @@ final class EnvironmentLoader
         // Remove the "ServiceContainer" from the namespace of the extension object.
         $this->namespace = rtrim(str_replace('ServiceContainer', '', $reflection->getNamespaceName()), '\\');
         // Remove the name of file and "ServiceContainer" from the path to extension.
-        $this->path = implode('/', array_slice(explode('/', $reflection->getFileName()), 0, -2));
+        $this->path = implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $reflection->getFileName()), 0, -2));
         $this->container = $container;
         // To not care about string format.
         $this->configKey = strtolower($extension->getConfigKey());
